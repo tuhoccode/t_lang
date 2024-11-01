@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
+
+</head>
+<body>
+    
+</body>
+</html>
+
+<div class="text-content" styles="" id="textContent">
+    Đây là một đoạn văn bản dài hơn 120px mà chúng ta muốn hiển thị. Nó có thể tiếp tục dài hơn nữa, nhưng chúng ta sẽ cắt nó lại.
+</div>
+<script>window.onload = function() {
+    const textContent = document.getElementById('textContent');
+    const originalText = textContent.textContent;
+    const maxHeight = 120; // Chiều cao tối đa cho phép
+
+    // Kiểm tra chiều cao hiện tại của văn bản
+    if (textContent.scrollHeight > maxHeight) {
+        let truncatedText = originalText;
+
+        // Cắt dần cho đến khi chiều cao hợp lệ
+        while (textContent.scrollHeight > maxHeight && truncatedText.length > 0) {
+            truncatedText = truncatedText.slice(0, -1); // Cắt một ký tự
+            textContent.textContent = truncatedText + '...'; // Thêm dấu ...
+        }
+    }
+};
+</script>
