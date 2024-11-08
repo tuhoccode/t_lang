@@ -76,18 +76,13 @@
   
     
     <div class="container">
-      <!-- Sách đề xuất -->
       <div class="container-itemg" id="suggested-books">
         <div class="recom"><h1>Sách Đề Xuất</h1></div>
         {% include 'content.html' %}
       </div>
-    
-      <!-- Đọc sách -->
       <div class="bt-ds no-underline" id="read-link-container">
         <a href="#" id="readLink" class="text-white" style="text-decoration: none;">Đọc Sách</a>
       </div>
-    
-      <!-- Thẻ container-item chứa các sách -->
       <div class="container-item" style="margin-right: 200px;" id="books-container">
         {% include 'urls.html' %}
         <div class="container-controls"></div>
@@ -590,10 +585,49 @@
   </script>
 
 
-<!-- <script>
+<script>
+//   $(document).ready(function() {
+//       $('#searchForm').on('submit', function(event) {
+//           event.preventDefault(); 
+
+//           $.ajax({
+//               type: 'POST',
+//               url: '/submit',
+//               data: $(this).serialize(),
+//               success: function(response) {
+//                   const searchTerm = response.title.toLowerCase(); 
+//                   let found = false;
+
+//                   $('.data-item').each(function() {
+//                       const cardTitle = $(this).find('.card-title').text().trim().toLowerCase();
+
+//                       if (cardTitle.includes(searchTerm)) {
+//                           $(this).show(); 
+//                           found = true;
+//                       } else {
+//                           $(this).hide(); 
+//                       }
+//                   });
+
+//                   if (!found) {$('#result').html('<p>Không tìm thấy tiêu đề nào khớp.</p>'); 
+//                   }
+//               },
+//               error: function(xhr, status, error) {
+//                   console.error('Có lỗi xảy ra:', error);
+//               }
+//           });
+//       });
+// });
+</script> 
+<script>
   $(document).ready(function() {
-      $('#searchForm').on('submit', function(event) {
-          event.preventDefault(); 
+    $('#searchForm').on('submit', function(event) {
+        event.preventDefault();
+
+        $('#suggested-books').addClass('hidden');
+        $('#read-link-container').addClass('hidden');
+        $('#books-container').addClass('hidden');
+        $('.container-controls').addClass('hidden');
 
           $.ajax({
               type: 'POST',
@@ -614,54 +648,11 @@
                       }
                   });
 
-                  if (!found) {$('#result').html('<p>Không tìm thấy tiêu đề nào khớp.</p>'); 
-                  }
-              },
-              error: function(xhr, status, error) {
-                  console.error('Có lỗi xảy ra:', error);
-              }
-          });
-      });
-  });
-</script> -->
-<script>
-  $(document).ready(function() {
-    $('#searchForm').on('submit', function(event) {
-        event.preventDefault();
-
-        // Ẩn các phần tử và loại bỏ không gian
-        $('#suggested-books').addClass('hidden');
-        $('#read-link-container').addClass('hidden');
-        $('#books-container').addClass('hidden');
-        $('.container-controls').addClass('hidden');
-
-          $.ajax({
-              type: 'POST',
-              url: '/submit',
-              data: $(this).serialize(),
-              success: function(response) {
-                  const searchTerm = response.title.toLowerCase(); // Lấy từ khóa tìm kiếm và chuyển thành chữ thường
-                  let found = false;
-
-                  // Duyệt qua các thẻ sách và kiểm tra khớp với từ khóa tìm kiếm
-                  $('.data-item').each(function() {
-                      const cardTitle = $(this).find('.card-title').text().trim().toLowerCase(); // Lấy tên sách
-
-                      if (cardTitle.includes(searchTerm)) {
-                          $(this).show(); // Hiển thị sách nếu khớp với từ khóa
-                          found = true;
-                      } else {
-                          $(this).hide(); // Ẩn sách nếu không khớp
-                      }
-                  });
-
-                  // Nếu không tìm thấy kết quả, hiển thị thông báo
                   if (!found) {
                       $('#result').html('<p>Không tìm thấy tiêu đề nào khớp.</p>');
                   }
 
-                  // Sau khi hoàn thành tìm kiếm, bạn có thể muốn hiển thị lại các phần đã ẩn
-                  $('#books-container').show();  // Hiển thị lại phần chứa các sách
+                  $('#books-container').show(); 
               },
               error: function(xhr, status, error) {
                   console.error('Có lỗi xảy ra:', error);
@@ -670,12 +661,6 @@
       });
   });
 </script>
-
-
-
-
-
-
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
