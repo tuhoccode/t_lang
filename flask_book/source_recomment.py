@@ -18,6 +18,7 @@ class RecommentBook:
         self.template = template
         self.data = pd.read_csv(self.csv_file)
         self.summary_title = dict(zip(self.data['summary'], self.data['title']))
+        self.title_dict = dict(zip(self.data['title'], self.data['title']))  
         self.db = self.Documents()
         self.prompt = self.Prompt()
         self.llm = self.llms()
@@ -56,21 +57,29 @@ class RecommentBook:
     #     not_query = result[0].page_content if result else None
     #     return self.summary_title.get(not_query, 'not found title')
 
-    def find_title_summary(self, summary):
-            documents = [summary] + self.data['summary'].tolist()
-
+    def find_title_summary(self, search_text):
+            documents = [search_text] + self.data['summary'].tolist() + self.data['title'].tolist()
             vectorizer = TfidfVectorizer().fit_transform(documents)
             vectors = vectorizer.toarray()
-
             cosine_matrix = cosine_similarity(vectors)
-            similar_indices = cosine_matrix[0][1:] 
-
-            best_match_index = np.argmax(similar_indices)
-            best_match_score = similar_indices[best_match_index]
-
-            threshold = 0.2  
-            if best_match_score > threshold:  
-                matching_summary = self.data['summary'].iloc[best_match_index]
-                return self.summary_title.get(matching_summary, 'not found title')
-
+            
+            similar_summary_indices = cosine_matrix[0][1:len(self.data)+1]
+            similar_title_indices = cosine_matrix[0][len(self.data)+1:]
+            
+            best_summary_index = np.argmax(similar_summary_indices)
+            best_title_index = np.argmax(similar_title_indices)
+            
+            best_summary_score = similar_summary_indices[best_summary_index]
+            best_title_score = similar_title_indices[best_title_index]
+            
+            threshold = 0.2
+            
+            if max(best_summary_score, best_title_score) > threshold:
+                if best_summary_score > best_title_score:
+                    matching_summary = self.data['summary'].iloc[best_summary_index]
+                    return self.summary_title.get(matching_summary, 'not found title')
+                else:
+                    matching_title = self.data['title'].iloc[best_title_index]
+                    return self.title_dict.get(matching_title, 'not found title')
+                    
             return 'not found title'

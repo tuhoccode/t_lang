@@ -272,3 +272,24 @@ body{
             }
             
 
+            .hidden {
+                position: absolute;
+                visibility: hidden;
+                height: 0;
+                margin: 0;
+                padding: 0;
+              }
+              
+              .data-item.book {
+                transition: all 0.3s ease;
+              }
+              
+              .filtered-layout {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1rem;
+              }
+              
+              .filtered-layout .book:not(.hidden) {
+                margin-bottom: 0;
+              }

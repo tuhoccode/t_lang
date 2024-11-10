@@ -324,8 +324,8 @@ def Underground_railroad():
 
 @user.route('/submit', methods=['POST'])
 def submit():
-    summary_to_search = request.form['summary']
-    title = recomment_instance.find_title_summary(summary_to_search)
+    search_text = request.form['summary']  
+    title = recomment_instance.find_title_summary(search_text)
     return jsonify({'title': title})
 
 @user.route('/login', methods=['POST', 'GET'])
