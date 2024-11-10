@@ -12,6 +12,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/notification.css') }}">
+
+
 </head>
 <body>
 {% block content %} {%endblock%}
@@ -52,17 +55,43 @@
 
     
 
-         <!-- data gia re -->
-        <div class="col-2"><a class="text-dark" href="https://vpndata.vn/#/login"><span><h1><i class="fa-solid fa-plane-up"></i></h1></span></a></div>
+        
           <!-- docx -->
         <div class="col-2"><a class="text-dark" href="/doc"><span><h1><i class="fa-solid fa-file"></i></h1></span></a></div><!-- ho tro -->
         <div class="col-2">
           <a class="text-dark" href="https://zalo.me/0383092564"><span><h1><i class="fa-solid fa-info"></i></h1></span></a>
         </div>
+         <!-- data gia re -->
+        <!-- <div class="col-2"><a class="text-dark" href="https://vpndata.vn/#/login"><span><h1><i class="fa-solid fa-plane-up"></i></h1></span></a></div> -->
+        <!-- Notifications will be inserted here -->
+        <!-- ---- -->
+                 <div class="col-2">
+                  <div class="notification-wrapper">
+                    <div class="notification-bell">
+                      <i class="fa-solid fa-bell position-relative">
+                        <span class="notification-badge" id="notificationCount">0</span>
+                      </i>
+                    </div>
+                    <div class="notification-panel" id="notificationPanel">
+                      <div class="notification-header">
+                        <h6 class="mb-0">Thông báo</h6>
+                      </div>
+                      <div class="notification-body" id="notificationBody">
+                      </div>
+                      <!-- offline -->
+                      <div class="online-status">
+                        <span id="onlineStatus" class="status-dot"></span>
+                        <span id="statusText">Offline</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            <!-- --------- -->
         <!-- log out  -->
         <div class="col-2 text-center">
           {% block awesome%} <a class="text-danger" href="/logout"><span><h1><i class="fa-solid fa-right-to-bracket"></i></h1></span></a>{%endblock%}
         </div>
+
       </div>
       
       <div class="row">
@@ -700,7 +729,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="{{url_for('static',filename='javascr/cjs.js')}}"></script>
-
+<script src="{{ url_for('static', filename='javascr/notification.js') }}"></script>
 
 
 
