@@ -29,6 +29,14 @@ def Base():
     session.permanent = False
     return render_template('base.html')
 
+@user.route('blog')
+def Blog():
+    return render_template('blog.html')
+
+@user.route('makepass')
+def Makepass():
+    return render_template('makepass.html')
+
 @user.route('/21 Bài Học Cho Thế Kỷ 21 (Tái Bản)')
 def Bai_hoc_tk21():
     return render_template('21 Bài Học Cho Thế Kỷ 21 (Tái Bản).html')

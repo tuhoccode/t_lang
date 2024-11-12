@@ -300,7 +300,6 @@ body{
     font-size: 36px; 
 }
 
-
 .notification-wrapper {
   position: relative;
   display: inline-block;
@@ -379,4 +378,132 @@ body{
 
 .status-offline {
   background-color: #9e9e9e;
+}
+
+
+/* menuhome */
+.sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    background-color: #fff;
+    overflow-x: hidden;
+    transition: 0.5s;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.sidebar-header {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.sidebar-content {
+    padding: 15px 0;
+}
+
+.sidebar a {
+    padding: 15px 25px;
+    text-decoration: none;
+    font-size: 16px;
+    color: #333;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidebar a:hover {
+    background-color: #f8f9fa;
+    color: #007bff;
+}
+
+.sidebar .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 25px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.menu-icon {
+    font-size: 24px;
+    cursor: pointer;
+    padding: 15px;
+    display: inline-block;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.menu-item i {
+    width: 20px;
+    text-align: center;
+}
+
+.divider {
+    height: 1px;
+    background-color: #dee2e6;
+    margin: 10px 0;
+}
+
+/* Animation for menu items */
+.menu-item {
+    transform: translateX(-100%);
+    animation: slideIn 0.3s forwards;
+}
+
+@keyframes slideIn {
+    to {
+        transform: translateX(0);
+    }
+}
+
+.user-info {
+    padding: 20px 25px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.user-info img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.user-details {
+    display: flex;
+}
+
+.user-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.user-email {
+    font-size: 14px;
+    color: #666;
+}
+
+/* css account */
+
+
+.user-details {
+    display: flex;
+    flex-direction: column; 
+}
+
+.user-name {
+    font-weight: bold; 
+    font-size: 16px;
+    margin-bottom: 4px; 
+}
+
+.user-email {
+    font-size: 14px;
+    color: #888; 
 }

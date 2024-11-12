@@ -25,11 +25,13 @@
 
     <div class="container">
       <div class="row mt-5">
-        <!-- trang chu -->
+        <!-- Menu button -->
         <div class="col-2 pe-2">
-            <a class="text-dark" href="/home"><span><h1><i class="fa-solid fa-bars"></i></h1></span></a>
-          </div>
-        <!-- the loai -->
+          <a class="text-dark" href="#" id="menuButton">
+            <span><h1><i class="fa-solid fa-bars"></i></h1></span>
+          </a>
+        </div>
+    
         <div class="col-2">
           <span id="toggleSpan">
             <h1><i class="fa-solid fa-list-check"></i></h1>
@@ -37,10 +39,10 @@
           <ul class="no-underline text-b" id="menu">
             <li><a href="#" class="no-underline text-b text-dark" data-category="Fiction">Fiction</a></li>
             <li><a href="#" class="no-underline text-b text-dark" data-category="Non-fiction">Non-Fiction</a></li>
-            <li><a href="#" class="no-underline text-b text-dark" data-category="Academic" >Academic</a></li>
+            <li><a href="#" class="no-underline text-b text-dark" data-category="Academic">Academic</a></li>
             <li><a href="#" class="no-underline text-b text-dark" data-category="Reference">Reference</a></li>
             <li><a href="#" class="no-underline text-b text-dark" data-category="Literature">Literature</a></li>
-            <li><a href="#" class="no-underline text-b text-dark" data-category="Children's Literature">Children’s Books</a></li>
+            <li><a href="#" class="no-underline text-b text-dark" data-category="Children's Literature">Children's Books</a></li>
             <li><a href="#" class="no-underline text-b text-dark" data-category="Self-help">Self-help</a></li>
             <li><a href="#" class="no-underline text-b text-dark" data-category="Psychology">Psychology</a></li>
             <li><a href="#" class="no-underline text-b text-dark" data-category="parenting books">parenting books</a></li>
@@ -58,60 +60,99 @@
             <li><a href="#" class="no-underline text-b text-dark" data-category="Horror">Horror</a></li>
             <li><a href="#" class="no-underline text-b text-dark" data-category="Humor">Humor</a></li>
             <li><a href="#" class="no-underline text-b text-dark" data-category="Memoir">Memoir</a></li>
-
-
-
-
-         </ul>
+          </ul>
         </div>
-
     
-
-        
-          <!-- docx -->
-        <div class="col-2"><a class="text-dark" href="/doc"><span><h1><i class="fa-solid fa-file"></i></h1></span></a></div><!-- ho tro -->
+        <!-- Document icon -->
         <div class="col-2">
-          <a class="text-dark" href="https://zalo.me/0383092564"><span><h1><i class="fa-solid fa-info"></i></h1></span></a>
+          <a class="text-dark" href="/blog">
+            <span><h1><i class="fa-solid fa-file"></i></h1></span>
+          </a>
         </div>
-         <!-- data gia re -->
-        <!-- <div class="col-2"><a class="text-dark" href="https://vpndata.vn/#/login"><span><h1><i class="fa-solid fa-plane-up"></i></h1></span></a></div> -->
-        <!-- Notifications will be inserted here -->
-        <!-- ---- -->
-                 <div class="col-2">
-                  <div class="notification-wrapper">
-                    <div class="notification-bell">
-                      <i class="fa-solid fa-bell position-relative">
-                        <span class="notification-badge" id="notificationCount">0</span>
-                      </i>
-                    </div>
-                    <div class="notification-panel" id="notificationPanel">
-                      <div class="notification-header">
-                        <h6 class="mb-0">Thông báo</h6>
-                      </div>
-                      <div class="notification-body" id="notificationBody">
-                      </div>
-                      <!-- offline -->
-                      <div class="online-status">
-                        <span id="onlineStatus" class="status-dot"></span>
-                        <span id="statusText">Offline</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-            <!-- --------- -->
-        <!-- log out  -->
+    
+        <!-- Support icon -->
+        <div class="col-2">
+          <a class="text-dark" href="https://zalo.me/0383092564">
+            <span><h1><i class="fa-solid fa-info"></i></h1></span>
+          </a>
+        </div>
+    
+        <!-- Notification -->
+        <div class="col-2">
+          <div class="notification-wrapper">
+            <div class="notification-bell">
+              <i class="fa-solid fa-bell position-relative">
+                <span class="notification-badge" id="notificationCount">0</span>
+              </i>
+            </div>
+            <div class="notification-panel" id="notificationPanel">
+              <div class="notification-header">
+                <h6 class="mb-0">Thông báo</h6>
+              </div>
+              <div class="notification-body" id="notificationBody"></div>
+              <div class="online-status">
+                <span id="onlineStatus" class="status-dot"></span>
+                <span id="statusText">Offline</span>
+              </div>
+            </div>
+          </div>
+        </div>
+    
+        <!-- Logout -->
         <div class="col-2 text-center">
-          {% block awesome%} <a class="text-danger" href="/logout"><span><h1><i class="fa-solid fa-right-to-bracket"></i></h1></span></a>{%endblock%}
+          {% block awesome%}
+          <a class="text-danger" href="/logout">
+            <span><h1><i class="fa-solid fa-right-to-bracket"></i></h1></span>
+          </a>
+          {% endblock %}
         </div>
-
       </div>
-      
+    
+      <!-- Search form -->
       <div class="row">
         <div class="col-11 text-center">
           <form id="searchForm" action="/submit" method="POST" class="d-flex my-4">
-              <input class="form-control me-2" type="text" name="summary" placeholder="Nhập tóm tắt sách..." aria-label="Search">
-              <button class="btn btn-outline-success" type="submit">Tìm kiếm</button>
+            <input class="form-control me-2" type="text" name="summary" placeholder="Nhập tóm tắt sách..." aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Tìm kiếm</button>
           </form>
+        </div>
+      </div>
+    
+      <!-- Sidebar -->
+      <div id="sidebarOverlay" class="sidebar-overlay"></div>
+      <div id="mySidebar" class="sidebar">
+        <div class="sidebar-header">
+            <span class="close-btn">&times;</span>
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-name">{{ session['name'] if session.get('name') else 'Tài khoản' }}</div>
+                    <div class="user-email">{{ session['email'] if session.get('email') else 'email@example.com' }}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="sidebar-content">
+            <a href="#" class="menu-item">
+                <i class="fas fa-user"></i>
+                Tài khoản của tôi
+            </a>
+            
+            <a href="https://zalo.me/0383092564" class="menu-item">
+                <i class="fas fa-headset"></i>
+                Hỗ trợ khách hàng
+            </a>
+            
+            <a href="/makepass" class="menu-item">
+                <i class="fas fa-key"></i>
+                Đổi mật khẩu
+            </a>
+            
+            <div class="divider"></div>
+            
+            <a href="/logout" class="menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                Đăng xuất
+            </a>
         </div>
       </div>
     </div>
@@ -737,7 +778,45 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   });
 </script>
-
+<!-- menuhome -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const menuButton = document.getElementById('menuButton');
+      const sidebar = document.getElementById('mySidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      const closeBtn = document.querySelector('.close-btn');
+  
+      // Mở menu
+      menuButton.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          openNav();
+      });
+  
+      // Đóng menu khi click vào nút close
+      closeBtn.addEventListener('click', closeNav);
+  
+      // Đóng menu khi click vào overlay
+      overlay.addEventListener('click', closeNav);
+  
+      function openNav() {
+          sidebar.style.width = "280px";
+          overlay.style.display = "block";
+          document.body.style.overflow = "hidden"; // Ngăn scroll body
+      }
+  
+      function closeNav() {
+          sidebar.style.width = "0";
+          overlay.style.display = "none";
+          document.body.style.overflow = ""; // Khôi phục scroll body
+      }
+  
+      // Ngăn việc đóng menu khi click vào nội dung menu
+      sidebar.addEventListener('click', function(e) {
+          e.stopPropagation();
+      });
+  });
+  </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="{{url_for('static',filename='javascr/cjs.js')}}"></script>
