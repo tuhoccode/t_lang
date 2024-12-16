@@ -1,34 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
-
+    <title>Web Capture</title>
 </head>
 <body>
-    
+    <h1>Chụp ảnh và tìm kiếm ảnh tương tự</h1>
+
+    <!-- Phần camera -->
+    <video id="video" width="640" height="480" autoplay></video>
+    <button id="capture">Capture</button>
+
+    <!-- Phần hiển thị ảnh vừa chụp -->
+    <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
+    <img id="capturedImage" src="" alt="Captured Image" style="display:none; width: 640px; height: 480px;" />
+
+    <!-- Kết quả tìm kiếm ảnh tương tự -->
+    <h2>Ảnh tương tự:</h2>
+    <div id="results"></div>
+
+    <script>
+        // Lấy các phần tử từ HTML
+        const videoElement = document.getElementById('video');
+        const captureButton = document.getElementById('capture');
+        const canvasElement = document.getElementById('canvas');
+        const capturedImageElement = document.getElementById('capturedImage');
+        const resultsElement = document.getElementById('results');
+
+        // Mở camera
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                videoElement.srcObject = stream;
+            })
+            .catch(err => {
+                console.error("Không thể truy cập camera: ", err);
+            });
+
+        // Chụp ảnh khi nhấn nút "Capture"
+        captureButton.addEventListener('click', () => {
+            const context = canvasElement.getContext('2d');
+            context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+            
+            // Chuyển canvas thành Base64
+            const imageData = canvasElement.toDataURL('image/jpeg');
+
+            // Hiển thị ảnh đã chụp
+            capturedImageElement.src = imageData;
+            capturedImageElement.style.display = 'block';
+
+            // Gửi dữ liệu ảnh lên server
+            fetch('/search', {
+                method: 'POST',
+                body: new URLSearchParams({ query: imageData }),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                resultsElement.innerHTML = ''; // Làm sạch kết quả cũ
+
+                if (data.error) {
+                    resultsElement.innerHTML = `<p>${data.error}</p>`;
+                } else {
+                    data.forEach(item => {
+                        const imgElement = document.createElement('img');
+                        imgElement.src = 'data:image/jpeg;base64,' + item.image;
+                        imgElement.style.width = '100px';  // Thay đổi kích thước ảnh cho hợp lý
+                        imgElement.style.marginRight = '10px';
+                        
+                        const similarityElement = document.createElement('span');
+                        similarityElement.textContent = `Tương đồng: ${(item.similarity * 100).toFixed(2)}%`;
+
+                        const resultDiv = document.createElement('div');
+                        resultDiv.appendChild(imgElement);
+                        resultDiv.appendChild(similarityElement);
+                        
+                        resultsElement.appendChild(resultDiv);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error("Lỗi khi gửi yêu cầu: ", error);
+                resultsElement.innerHTML = "<p>Đã xảy ra lỗi trong quá trình tìm kiếm.</p>";
+            });
+        });
+    </script>
 </body>
 </html>
-
-<div class="text-content" styles="" id="textContent">
-    Đây là một đoạn văn bản dài hơn 120px mà chúng ta muốn hiển thị. Nó có thể tiếp tục dài hơn nữa, nhưng chúng ta sẽ cắt nó lại.
-</div>
-<script>window.onload = function() {
-    const textContent = document.getElementById('textContent');
-    const originalText = textContent.textContent;
-    const maxHeight = 120; // Chiều cao tối đa cho phép
-
-    // Kiểm tra chiều cao hiện tại của văn bản
-    if (textContent.scrollHeight > maxHeight) {
-        let truncatedText = originalText;
-
-        // Cắt dần cho đến khi chiều cao hợp lệ
-        while (textContent.scrollHeight > maxHeight && truncatedText.length > 0) {
-            truncatedText = truncatedText.slice(0, -1); // Cắt một ký tự
-            textContent.textContent = truncatedText + '...'; // Thêm dấu ...
-        }
-    }
-};
-</script>

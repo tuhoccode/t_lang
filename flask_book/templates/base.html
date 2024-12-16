@@ -69,7 +69,7 @@
             <span><h1><i class="fa-solid fa-file"></i></h1></span>
           </a>
         </div>
-    
+
         <!-- Support icon -->
         <div class="col-2">
           <a class="text-dark" href="https://zalo.me/0383092564">
@@ -178,10 +178,179 @@
         <div class="container-controls"></div>
       </div>
     </div>
-    
-  
+    <style>
+      /* Flexbox cho camera và nút chụp */
+      #cameraContainer {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 20px;
+          margin-top: 20px;
+      }
 
+      #video {
+          width: 300px;  /* Đặt chiều rộng cho video */
+          height: 225px; /* Đặt chiều cao cho video */
+          border: 2px solid #ccc;
+          border-radius: 5px;
+      }
 
+      #capture {
+          margin-top: 10px;
+      }
+
+      #capturedImage {
+          width: 300px; /* Điều chỉnh kích thước ảnh giống như video */
+          height: 225px;
+          object-fit: cover;
+          border: 2px solid #ccc;
+          border-radius: 5px;
+          display: none;
+      }
+
+      /* Nút đóng camera */
+      #closeCameraBtn {
+          margin-top: 10px;
+      }
+
+      /* Flexbox cho các kết quả ảnh */
+      #results {
+          display: flex;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 20px;
+          margin-top: 20px;
+      }
+
+      #results img {
+          width: 100px;  /* Đặt kích thước ảnh */
+          height: auto;
+          border: 2px solid #ccc;
+          border-radius: 5px;
+      }
+
+      #openCameraBtn {
+          margin-bottom: 20px;
+      }
+  </style>
+<!-- ################## -->
+       
+      <!-- Thêm biểu tượng camera -->
+      <div class="row">
+        <div class="col-12 text-center mt-5">
+          <h2>Chụp ảnh và tìm kiếm ảnh tương tự</h2>
+
+          <!-- Biểu tượng camera -->
+          <button id="openCameraBtn" class="btn btn-primary">
+            <i class="fa-solid fa-camera"></i> Mở camera
+          </button>
+
+          <!-- Camera sẽ ẩn, chỉ hiện khi nhấn nút "Mở camera" -->
+          <div id="cameraContainer" style="display: none;">
+            <video id="video" autoplay></video>
+            <button id="capture" class="btn btn-success mt-2">Capture</button>
+            <button id="closeCameraBtn" class="btn btn-danger mt-2">Đóng camera</button>
+
+            <!-- Hiển thị ảnh đã chụp -->
+            <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
+            <img id="capturedImage" src="" alt="Captured Image" />
+          </div>
+
+          <!-- Kết quả tìm kiếm ảnh -->
+          <h3>Ảnh tương tự:</h3>
+          <div id="results"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="result">
+        <!-- Kết quả tìm kiếm  -->
+    </div>
+  </main>
+
+  <script>
+    // Hiển thị camera khi người dùng nhấn nút
+    const openCameraBtn = document.getElementById('openCameraBtn');
+    const cameraContainer = document.getElementById('cameraContainer');
+    const videoElement = document.getElementById('video');
+    const closeCameraBtn = document.getElementById('closeCameraBtn');
+    const capturedImageElement = document.getElementById('capturedImage');
+    const canvasElement = document.getElementById('canvas');
+    const resultsElement = document.getElementById('results');
+
+    openCameraBtn.addEventListener('click', function() {
+      cameraContainer.style.display = 'flex'; 
+      openCameraBtn.style.display = 'none'; 
+      
+      // Mở camera
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+          videoElement.srcObject = stream;
+        })
+        .catch(err => {
+          console.error("Không thể truy cập camera: ", err);
+        });
+    });
+
+    // "Đóng camera"
+    closeCameraBtn.addEventListener('click', function() {
+      cameraContainer.style.display = 'none'; 
+      openCameraBtn.style.display = 'block'; 
+      const stream = videoElement.srcObject;
+      const tracks = stream.getTracks();
+      tracks.forEach(track => track.stop()); 
+    });
+
+    const captureButton = document.getElementById('capture');
+
+    captureButton.addEventListener('click', () => {
+      const context = canvasElement.getContext('2d');
+      context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+      
+      const imageData = canvasElement.toDataURL('image/jpeg');
+
+      capturedImageElement.src = imageData;
+      capturedImageElement.style.display = 'block';
+
+      fetch('/search', {
+        method: 'POST',
+        body: new URLSearchParams({ query: imageData }),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        resultsElement.innerHTML = ''; 
+
+        if (data.error) {
+          resultsElement.innerHTML = `<p>${data.error}</p>`;
+        } else {
+          data.forEach(item => {
+            const imgElement = document.createElement('img');
+            imgElement.src = 'data:image/jpeg;base64,' + item.image;
+            imgElement.style.width = '100px';  
+            imgElement.style.marginRight = '10px';
+            
+            const similarityElement = document.createElement('span');
+            similarityElement.textContent = `Tương đồng: ${(item.similarity * 100).toFixed(2)}%`;
+
+const resultDiv = document.createElement('div');
+resultDiv.appendChild(imgElement);
+resultDiv.appendChild(similarityElement);
+
+resultsElement.appendChild(resultDiv);
+});
+}
+})
+.catch(error => {
+console.error("Lỗi khi gửi yêu cầu: ", error);
+resultsElement.innerHTML = "<p>Đã xảy ra lỗi trong quá trình tìm kiếm.</p>";
+});
+});
+</script>
     <div id="books-wrapper">
     <!-- hang 1 -->
     <div class="row data-item" id="book1">
@@ -701,7 +870,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   </script>
 
-
 <script>
 //   $(document).ready(function() {
 //       $('#searchForm').on('submit', function(event) {
@@ -786,32 +954,27 @@ document.addEventListener('DOMContentLoaded', () => {
       const overlay = document.getElementById('sidebarOverlay');
       const closeBtn = document.querySelector('.close-btn');
   
-      // Mở menu
       menuButton.addEventListener('click', function(e) {
           e.preventDefault();
           e.stopPropagation();
           openNav();
       });
   
-      // Đóng menu khi click vào nút close
       closeBtn.addEventListener('click', closeNav);
-  
-      // Đóng menu khi click vào overlay
       overlay.addEventListener('click', closeNav);
   
       function openNav() {
           sidebar.style.width = "280px";
           overlay.style.display = "block";
-          document.body.style.overflow = "hidden"; // Ngăn scroll body
+          document.body.style.overflow = "hidden"; 
       }
   
       function closeNav() {
           sidebar.style.width = "0";
           overlay.style.display = "none";
-          document.body.style.overflow = ""; // Khôi phục scroll body
+          document.body.style.overflow = ""; 
       }
   
-      // Ngăn việc đóng menu khi click vào nội dung menu
       sidebar.addEventListener('click', function(e) {
           e.stopPropagation();
       });

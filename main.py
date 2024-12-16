@@ -1,6 +1,12 @@
 from flask_book import create_app, db
 import os
 from flask_migrate import Migrate
+import torch
+import gc
+import os
+os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
+torch.cuda.empty_cache()
+gc.collect()
 
 app = create_app()
 db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'users.db')

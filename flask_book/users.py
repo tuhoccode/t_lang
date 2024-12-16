@@ -2,6 +2,12 @@ from flask import Blueprint, render_template, request, jsonify,session,redirect,
 from flask_book.source_recomment import RecommentBook
 from flask_book import db
 from .data_user import User
+from flask import Flask, request, jsonify
+import base64
+from PIL import Image
+from io import BytesIO
+import os
+from .t import image_to_base64, search_similar_images, load_faiss_index,OUTPUT_INDEX_PATH,model
 
 recomment_instance = RecommentBook(
     embedding_file='google-bert/bert-base-uncased',
@@ -36,6 +42,38 @@ def Blog():
 @user.route('makepass')
 def Makepass():
     return render_template('makepass.html')
+
+
+
+@user.route('/search', methods=['POST'])
+def search():
+    try:
+        query_data = request.form.get('query')  
+
+        if not query_data:
+            return jsonify({"error": "Không có dữ liệu ảnh được gửi từ client."})
+
+        img_data = base64.b64decode(query_data.split(',')[1]) 
+        img = Image.open(BytesIO(img_data))  
+
+        index, image_paths = load_faiss_index(OUTPUT_INDEX_PATH)
+        if index is None:
+            return jsonify({"error": "Không thể tải FAISS index."})
+
+        similar_images, similarities = search_similar_images(img, model, index, image_paths)
+
+        if not similar_images:
+            return jsonify({"error": "Không tìm thấy ảnh tương tự."})
+
+        result = [{
+            'image': image_to_base64(Image.open(img_path)), 
+            'similarity': float(sim)
+        } for img_path, sim in zip(similar_images, similarities)]
+        
+        return jsonify(result)
+
+    except Exception as e:
+        return jsonify({"error": f"Đã xảy ra lỗi: {str(e)}"})
 
 @user.route('/21 Bài Học Cho Thế Kỷ 21 (Tái Bản)')
 def Bai_hoc_tk21():
