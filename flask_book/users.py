@@ -7,7 +7,7 @@ import base64
 from PIL import Image
 from io import BytesIO
 import os
-from .t import image_to_base64, search_similar_images, load_faiss_index,OUTPUT_INDEX_PATH,model
+from .clip import image_to_base64, search_similar_images, load_faiss_index,OUTPUT_INDEX_PATH,model
 
 recomment_instance = RecommentBook(
     embedding_file='google-bert/bert-base-uncased',
@@ -28,7 +28,7 @@ user = Blueprint('user', __name__)
 
 @user.route('/')
 def Log():
-    return redirect(url_for('user.Login'))
+    return redirect(url_for('user.Base'))
 
 @user.route('/base')
 def Base():
@@ -395,11 +395,14 @@ def Login():
     return render_template('login.html', message=message)
 @user.route('/logout')
 def Logout():
+    session.clear()
+
     session.pop('loggedin', None)
     session.pop('user_id',None)
     session.pop('name',None)
     session.pop('email',None)
     return redirect(url_for('user.Login'))
+
 
 @user.route('/register', methods = ['POST','GET'])
 def Register():

@@ -18,7 +18,6 @@ IMAGES_PATH = os.path.join(CURRENT_DIR, 'static', 'images')
 OUTPUT_INDEX_PATH = os.path.join(CURRENT_DIR, 'vector.index')
 
 def generate_clip_embeddings(images_path, model, max_images=100):
-    """Generate embeddings for images using CLIP model"""
     image_paths = glob.glob(os.path.join(images_path, '*.webp'))[:max_images]
     
     if not image_paths:
@@ -45,7 +44,6 @@ def generate_clip_embeddings(images_path, model, max_images=100):
     return embeddings, valid_image_paths
 
 def create_faiss_index(embeddings, image_paths, output_path):
-    """Create and save FAISS index"""
     if not embeddings or not image_paths:
         print("Không có dữ liệu để tạo index")
         return None
@@ -79,8 +77,7 @@ def load_faiss_index(index_path):
     print(f"Đã tải index từ {index_path}")
     return index, image_paths
 
-def search_similar_images(query, model, index, image_paths, top_k=5):
-    """Search for similar images from text or image input"""
+def search_similar_images(query, model, index, image_paths, top_k=3):
     if isinstance(query, str):
         query_features = model.encode(query)
     else:
@@ -99,41 +96,6 @@ def image_to_base64(img):
     img.save(buffered, format="JPEG")
     img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
     return img_str
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/search', methods=['POST'])
-def search():
-    try:
-        query_data = request.form.get('query') 
-
-        if not query_data:
-            return jsonify({"error": "Không có dữ liệu ảnh được gửi từ client."})
-
-        img_data = base64.b64decode(query_data.split(',')[1])  
-        img = Image.open(BytesIO(img_data))  
-
-        index, image_paths = load_faiss_index(OUTPUT_INDEX_PATH)
-
-        if index is None:
-            return jsonify({"error": "Không thể tải FAISS index."})
-
-        similar_images, similarities = search_similar_images(img, model, index, image_paths)
-
-        if not similar_images:
-            return jsonify({"error": "Không tìm thấy ảnh tương tự."})
-
-        result = [{
-            'image': image_to_base64(Image.open(img_path)),  
-            'similarity': float(sim)
-        } for img_path, sim in zip(similar_images, similarities)]
-        
-        return jsonify(result)
-
-    except Exception as e:
-        return jsonify({"error": f"Đã xảy ra lỗi: {str(e)}"})
 
 def main():
     if not os.path.exists(IMAGES_PATH):
