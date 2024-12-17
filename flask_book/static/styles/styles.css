@@ -555,3 +555,21 @@ body{
 #openCameraBtn {
     margin-bottom: 20px;
 }
+#cameraContainer {
+    min-width: 320px;
+    max-width: 90vw;
+  }
+  #cameraContainer video {
+    width: 100%;
+    max-width: 640px;
+    height: auto;
+  }
+  #cameraContainer button {
+    cursor: pointer;
+    position: relative;
+    z-index: 10000;
+  }
+  .camera-controls {
+    position: relative;
+    z-index: 10000;
+  }

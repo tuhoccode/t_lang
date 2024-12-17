@@ -128,10 +128,14 @@
             </div>
           </div>
         
-          <div id="cameraContainer" style="display: none; position: fixed; top: 10px; left: 10px; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 10px;">
-            <video id="video" autoplay></video>
-            <button id="capture" class="btn btn-success mt-2">Capture</button>
-            <button id="closeCameraBtn" class="btn btn-danger mt-2">Đóng camera</button>
+          <div id="cameraContainer" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); padding: 20px; border-radius: 10px; z-index: 9999;">
+            <video id="video" autoplay style="max-width: 100%; border-radius: 5px;"></video>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
+              <button id="capture" class="btn btn-success">Chụp ảnh</button>
+              <button id="uploadImageBtn" class="btn btn-info">Tải ảnh lên</button>
+              <button id="closeCameraBtn" class="btn btn-danger">Đóng camera</button>
+            </div>
+            <input type="file" id="imageUpload" accept="image/*" style="display: none;">
             <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
           </div>
         
@@ -145,7 +149,6 @@
                   <h3>Sách Tìm Kiếm:</h3>
                   <div id="results"></div>
                 </div>
-                <!-- Nút đóng để ẩn ảnh và kết quả -->
                 <div id="closeResultsBtn" style="display: none;">
                   <button class="btn btn-danger mt-2">Đóng kết quả</button>
                 </div>
@@ -162,22 +165,28 @@
     </div>
   </main>
 
+
+
   <script>
-const openCameraBtn = document.getElementById('openCameraBtn');
+const uploadImageBtn = document.getElementById('uploadImageBtn');
+const imageUpload = document.getElementById('imageUpload');
+const captureButton = document.getElementById('capture');
 const cameraContainer = document.getElementById('cameraContainer');
+const openCameraBtn = document.getElementById('openCameraBtn');
 const videoElement = document.getElementById('video');
-const closeCameraBtn = document.getElementById('closeCameraBtn');
-const capturedImageElement = document.getElementById('capturedImage');
 const canvasElement = document.getElementById('canvas');
+const capturedImageElement = document.getElementById('capturedImage');
+const resultsContainer = document.getElementById('resultsContainer');
 const resultsElement = document.getElementById('results');
 const capturedImageContainer = document.getElementById('capturedImageContainer');
-const resultsContainer = document.getElementById('resultsContainer');
 const closeResultsBtn = document.getElementById('closeResultsBtn');
+const closeCameraBtn = document.getElementById('closeCameraBtn');
 
 // Mở camera
-openCameraBtn.addEventListener('click', function() {
-  cameraContainer.style.display = 'block'; 
-  openCameraBtn.style.display = 'none'; 
+openCameraBtn.addEventListener('click', function(e) {
+  e.preventDefault();
+  cameraContainer.style.display = 'block';
+  openCameraBtn.style.display = 'none';
   
   navigator.mediaDevices.getUserMedia({ video: true })
     .then(stream => {
@@ -185,44 +194,95 @@ openCameraBtn.addEventListener('click', function() {
     })
     .catch(err => {
       console.error("Không thể truy cập camera: ", err);
+      openCameraBtn.style.display = 'block';
+      cameraContainer.style.display = 'none';
     });
 
-  resultsContainer.style.display = 'none'; 
-  capturedImageContainer.style.display = 'none'; 
+  resultsContainer.style.display = 'none';
+  capturedImageContainer.style.display = 'none';
   resultsElement.innerHTML = '';
-  closeResultsBtn.style.display = 'none'; 
+  closeResultsBtn.style.display = 'none';
 });
 
 // Đóng camera
-closeCameraBtn.addEventListener('click', function() {
-  cameraContainer.style.display = 'none'; 
-  openCameraBtn.style.display = 'block'; 
+closeCameraBtn.addEventListener('click', function(e) {
+  e.preventDefault();
+  e.stopPropagation();
   
-  const stream = videoElement.srcObject;
-  const tracks = stream.getTracks();
-  tracks.forEach(track => track.stop());
+  if (videoElement.srcObject) {
+    const stream = videoElement.srcObject;
+    const tracks = stream.getTracks();
+    tracks.forEach(track => track.stop());
+    videoElement.srcObject = null;
+  }
 
-  resultsContainer.style.display = 'none'; 
-  capturedImageElement.style.display = 'none'; 
-  capturedImageContainer.style.display = 'none'; 
-  closeResultsBtn.style.display = 'none'; 
+  cameraContainer.style.display = 'none';
+  openCameraBtn.style.display = 'block';
+  resultsContainer.style.display = 'none';
+  capturedImageElement.style.display = 'none';
+  capturedImageContainer.style.display = 'none';
+  closeResultsBtn.style.display = 'none';
 });
 
-const captureButton = document.getElementById('capture');
-captureButton.addEventListener('click', () => {
+// Chụp ảnh
+captureButton.addEventListener('click', function(e) {
+  e.preventDefault();
   const context = canvasElement.getContext('2d');
   context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
   
   const imageData = canvasElement.toDataURL('image/jpeg');
-  capturedImageElement.src = imageData; 
+  capturedImageElement.src = imageData;
   capturedImageElement.style.display = 'block';
-
-  cameraContainer.style.display = 'none'; 
   
-  capturedImageContainer.style.display = 'block'; 
-  resultsContainer.style.display = 'block'; 
+  if (videoElement.srcObject) {
+    const stream = videoElement.srcObject;
+    const tracks = stream.getTracks();
+    tracks.forEach(track => track.stop());
+    videoElement.srcObject = null;
+  }
+  
+  cameraContainer.style.display = 'none';
+  openCameraBtn.style.display = 'block';
+  
+  capturedImageContainer.style.display = 'block';
+  resultsContainer.style.display = 'block';
   closeResultsBtn.style.display = 'block';
   
+  searchImage(imageData);
+});
+
+// Tải ảnh lên
+uploadImageBtn.addEventListener('click', function(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  imageUpload.click();
+});
+
+imageUpload.addEventListener('change', (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const imageData = e.target.result;
+      capturedImageElement.src = imageData;
+      capturedImageElement.style.display = 'block';
+
+      cameraContainer.style.display = 'none';
+      openCameraBtn.style.display = 'block';
+
+      capturedImageContainer.style.display = 'block';
+      resultsContainer.style.display = 'block';
+      closeResultsBtn.style.display = 'block';
+
+      // Gửi yêu cầu tìm kiếm ảnh
+      searchImage(imageData);
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+// Tìm kiếm ảnh
+function searchImage(imageData) {
   fetch('/search', {
     method: 'POST',
     body: new URLSearchParams({ query: imageData }),
@@ -233,7 +293,6 @@ captureButton.addEventListener('click', () => {
   .then(response => response.json())
   .then(data => {
     resultsElement.innerHTML = '';
-
     if (data.error) {
       resultsElement.innerHTML = `<p>${data.error}</p>`;
     } else {
@@ -257,17 +316,15 @@ captureButton.addEventListener('click', () => {
     console.error("Lỗi khi gửi yêu cầu: ", error);
     resultsElement.innerHTML = "<p>Đã xảy ra lỗi trong quá trình tìm kiếm.</p>";
   });
-});
+}
 
+// Đóng kết quả tìm kiếm
 closeResultsBtn.addEventListener('click', () => {
-  capturedImageElement.style.display = 'none'; 
-  capturedImageContainer.style.display = 'none'; 
-  resultsContainer.style.display = 'none'; 
-  closeResultsBtn.style.display = 'none'; 
+  capturedImageElement.style.display = 'none';
+  capturedImageContainer.style.display = 'none';
+  resultsContainer.style.display = 'none';
+  closeResultsBtn.style.display = 'none';
 });
-
-
-
 </script>
 
 
