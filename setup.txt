@@ -16,3 +16,6 @@ pymysql
 Flask-Migrate
 flask-login
 pysqlite3
+Pillow
+matplotlib
+numpy
