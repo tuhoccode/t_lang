@@ -21,7 +21,7 @@ def generate_clip_embeddings(images_path, model, max_images=100):
     image_paths = glob.glob(os.path.join(images_path, '*.webp'))[:max_images]
     
     if not image_paths:
-        print(f"Không tìm thấy ảnh .webp trong thư mục: {images_path}")
+        print(f"Không có ảnh .webp trong: {images_path}")
         return [], []
     
     print(f"Tìm thấy {len(image_paths)} ảnh")
@@ -36,16 +36,16 @@ def generate_clip_embeddings(images_path, model, max_images=100):
             embedding = model.encode(image)
             embeddings.append(embedding)
             valid_image_paths.append(img_path)
-            print(f"Đã xử lý ảnh: {os.path.basename(img_path)}")
+            print(f"Xử lí ảnh,ok: {os.path.basename(img_path)}")
         except Exception as e:
-            print(f"Không thể xử lý ảnh {img_path}: {e}")
+            print(f"Không xử lý được ảnh {img_path}: {e}")
     
     print(f"Tổng số ảnh đã xử lý thành công: {len(embeddings)}")
     return embeddings, valid_image_paths
 
 def create_faiss_index(embeddings, image_paths, output_path):
     if not embeddings or not image_paths:
-        print("Không có dữ liệu để tạo index")
+        print("Không có data tạo index")
         return None
         
     dimension = len(embeddings[0])
@@ -57,7 +57,7 @@ def create_faiss_index(embeddings, image_paths, output_path):
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     
     faiss.write_index(index, output_path)
-    print(f"Đã lưu index tại {output_path}")
+    print(f"Lưu trong: {output_path}")
     
     with open(output_path + '.paths', 'w') as f:
         for img_path in image_paths:
@@ -66,15 +66,14 @@ def create_faiss_index(embeddings, image_paths, output_path):
     return index
 
 def load_faiss_index(index_path):
-    """Load FAISS index and image paths"""
     if not os.path.exists(index_path):
-        print(f"Không tìm thấy file index tại {index_path}")
+        print(f"Không thấy index trong {index_path}")
         return None, []
         
     index = faiss.read_index(index_path)
     with open(index_path + '.paths', 'r') as f:
         image_paths = [line.strip() for line in f]
-    print(f"Đã tải index từ {index_path}")
+    print(f"Loaded index: {index_path}")
     return index, image_paths
 
 def search_similar_images(query, model, index, image_paths, top_k=3):
@@ -99,14 +98,14 @@ def image_to_base64(img):
 
 def main():
     if not os.path.exists(IMAGES_PATH):
-        print(f"Thư mục images không tồn tại tại: {IMAGES_PATH}")
+        print(f"Thư mục images không tồn tại: {IMAGES_PATH}")
         return
     
     if not os.path.exists(OUTPUT_INDEX_PATH):
         print("Đang tạo embeddings và FAISS index...")
         embeddings, image_paths = generate_clip_embeddings(IMAGES_PATH, model, max_images=100)
         if not embeddings:
-            print("Không có embeddings để tạo index")
+            print("Không có embeddings tạo index")
             return
         
         print("Đang tạo FAISS index...")
@@ -114,7 +113,7 @@ def main():
         if index is None:
             print("Không thể tạo index")
             return
-        print("Hoàn tất tạo index!")
+        print("indexed!")
 
 if __name__ == '__main__':
     main()  
