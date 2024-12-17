@@ -73,7 +73,7 @@ def search():
         return jsonify(result)
 
     except Exception as e:
-        return jsonify({"error": f"Đã xảy ra lỗi: {str(e)}"})
+        return jsonify({"error": f"Đã xảy ra: {str(e)}"})
 
 @user.route('/21 Bài Học Cho Thế Kỷ 21 (Tái Bản)')
 def Bai_hoc_tk21():

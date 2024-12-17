@@ -9,17 +9,18 @@ from sentence_transformers import SentenceTransformer
 from io import BytesIO
 import matplotlib.pyplot as plt
 
-app = Flask(__name__)
+app = Flask(__name__) 
 
 model = SentenceTransformer('clip-ViT-B-32')
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 IMAGES_PATH = os.path.join(CURRENT_DIR, 'static', 'images')
 OUTPUT_INDEX_PATH = os.path.join(CURRENT_DIR, 'vector.index')
+print("Đường dẫn thư mục images:", IMAGES_PATH)
 
 def generate_clip_embeddings(images_path, model, max_images=100):
     image_paths = glob.glob(os.path.join(images_path, '*.webp'))[:max_images]
-    
+
     if not image_paths:
         print(f"Không có ảnh .webp trong: {images_path}")
         return [], []
@@ -59,7 +60,7 @@ def create_faiss_index(embeddings, image_paths, output_path):
     faiss.write_index(index, output_path)
     print(f"Lưu trong: {output_path}")
     
-    with open(output_path + '.paths', 'w') as f:
+    with open(output_path + '.paths', 'w',encoding='utf-8') as f:
         for img_path in image_paths:
             f.write(img_path + '\n')
     
@@ -71,7 +72,7 @@ def load_faiss_index(index_path):
         return None, []
         
     index = faiss.read_index(index_path)
-    with open(index_path + '.paths', 'r') as f:
+    with open(index_path + '.paths', 'r',encoding='utf-8') as f:
         image_paths = [line.strip() for line in f]
     print(f"Loaded index: {index_path}")
     return index, image_paths
@@ -93,8 +94,9 @@ def search_similar_images(query, model, index, image_paths, top_k=3):
 def image_to_base64(img):
     buffered = BytesIO()
     img.save(buffered, format="JPEG")
-    img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
+    img_str = base64.b64encode(buffered.getvalue()).decode("utf-8") 
     return img_str
+
 
 def main():
     if not os.path.exists(IMAGES_PATH):

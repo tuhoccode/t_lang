@@ -1,5 +1,4 @@
-ctransformers
-transformers
+
 langchain
 langchain-community
 torch
@@ -15,7 +14,9 @@ npm
 pymysql
 Flask-Migrate
 flask-login
-pysqlite3
 Pillow
 matplotlib
 numpy
+scikit-learn
+ctransformers
+transformers
